@@ -10,10 +10,10 @@ import tensorflow_probability as tfp
 
 class GP:
 
-    def __init__(self, kernel_function, mean_function, noise_scale=0):
+    def __init__(self, kernel_function, noise_scale=0):
 
         self.kernel_function = kernel_function
-        self.mean_function = mean_function
+        # self.mean_function = mean_function
         self.noise_scale = noise_scale
 
 
@@ -68,7 +68,7 @@ def GP_noisy(X1, y1, X2, kernel_function, measurement_noise_scale):
     :return:
     '''
 
-    sigma11 = kernel_function(X1, X1) + (measurement_noise_scale**2 * jnp.eye(X1.size))
+    sigma11 = kernel_function(X1, X1) #+ (measurement_noise_scale**2 * jnp.eye(X1.size))
     sigma22 = kernel_function(X2, X2)
     sigma12 = kernel_function(X1, X2)
 
