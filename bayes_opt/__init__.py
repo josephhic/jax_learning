@@ -5,3 +5,4 @@ Created on 19/05/2022
 
 from kernels import *
 from gp import *
+from bayes import *
