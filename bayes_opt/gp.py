@@ -10,7 +10,7 @@ import tensorflow_probability as tfp
 
 class GP:
 
-    def __init__(self, kernel_function, noise_scale=0):
+    def __init__(self, kernel_function, noise_scale=0.5):
 
         self.kernel_function = kernel_function
         # self.mean_function = mean_function
@@ -21,9 +21,15 @@ class GP:
         self.X = X
         self.Y = Y
 
+    def add_data(self, x, y):
+
+        self.X = jnp.append(self.X, x)
+        self.Y = jnp.append(self.Y, y)
+
+
     def predict(self, x):
 
-        sigma11 = self.kernel_function(self.X, self.X)
+        sigma11 = self.kernel_function(self.X, self.X) + (self.noise_scale**2 * jnp.eye(self.X.size))
         sigma22 = self.kernel_function(x, x)
         sigma12 = self.kernel_function(self.X, x)
 
@@ -33,6 +39,8 @@ class GP:
         posterior_cov = sigma22 - (mean_solver @ sigma12)
 
         return posterior_mean, posterior_cov
+
+
 
 
 

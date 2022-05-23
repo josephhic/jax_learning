@@ -7,6 +7,8 @@ import jax
 import jax.numpy as jnp
 import jax.random as jr
 
+import numpy as np
+
 import matplotlib.pyplot as plt
 
 from kernels import *
@@ -17,8 +19,33 @@ from bayes import *
 import imageio
 
 def func(x):
-    return jnp.sin(x) + (jnp.power(x, 2) / 10)
+    return jnp.sin(5 * x) + (jnp.power(x, 2) / 10)
 
+
+points = 10
+
+X = np.linspace(-2, 2, 100)
+Y = np.linspace(-2, 2, 100)
+x, y = np.meshgrid(X, Y)
+
+xrand = np.random.uniform(-2, 2, points)
+yrand = np.random.uniform(-2, 2, points)
+
+# two d case
+domain = x + y
+output = func(domain)
+
+xr, yr = np.meshgrid(xrand, yrand)
+
+dom = xr + yr
+out = func(dom)
+
+b = BayesOpt(func, squared_exponential, dom, out, domain)
+
+
+plt.figure()
+plt.imshow(output.T, origin='lower')
+plt.show()
 
 n1 = 4
 n2 = 100
@@ -33,29 +60,37 @@ y1 = func(X1)
 y1 += (measurement_noise**2 * np.random.rand(y1.size))
 X2 = np.linspace(*domain, n2)
 
+from bayes import BayesOpt
+
+bo = BayesOpt(func, squared_exponential, X1, y1, X2)
+
+# bo.optimise()
 
 
 
 
-gp = GP(squared_exponential)
-gp.data(X1, y1)
-m, c = gp.predict(X2)
-s = jnp.sqrt(jnp.diag(c))
-
-ei = expected_improvement(gp, X2)
-
-
-
-
-plt.plot(X2, m)
-plt.scatter(X1, y1)
-plt.fill_between(X2.flat, m - 2*s, m + 2*s, alpha=0.1)
-plt.vlines(X2[jnp.argmax(ei)], 0, m[jnp.argmax(ei)], linestyles='dashed')
-plt.show()
-
-
-plt.figure()
-plt.plot(X2, ei)
-plt.vlines(X2[jnp.argmax(ei)], 0, 1, linestyles='dashed')
-plt.show()
-
+#
+# gp = GP(squared_exponential)
+# gp.data(X1, y1)
+# m, c = gp.predict(X2)
+# s = jnp.sqrt(jnp.diag(c))
+#
+# ei = expected_improvement(gp, X2)
+#
+#
+#
+#
+#
+#
+# plt.plot(X2, m)
+# plt.scatter(X1, y1)
+# plt.fill_between(X2.flat, m - 2*s, m + 2*s, alpha=0.1)
+# plt.vlines(X2[jnp.argmax(ei)], 0, m[jnp.argmax(ei)], linestyles='dashed')
+# plt.show()
+#
+#
+# plt.figure()
+# plt.plot(X2, ei)
+# plt.vlines(X2[jnp.argmax(ei)], 0, 1, linestyles='dashed')
+# plt.show()
+#
