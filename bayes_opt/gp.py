@@ -29,11 +29,17 @@ class GP:
 
     def predict(self, x):
 
-        sigma11 = self.kernel_function(self.X, self.X) + (self.noise_scale**2 * jnp.eye(self.X.size))
+        sigma11 = self.kernel_function(self.X, self.X) + (self.noise_scale**2 * jnp.eye(self.X.shape[0]))
         sigma22 = self.kernel_function(x, x)
         sigma12 = self.kernel_function(self.X, x)
 
+
+
         mean_solver = jax.scipy.linalg.solve(sigma11, sigma12).T
+
+        print(mean_solver)
+        print(mean_solver.shape)
+
         posterior_mean = mean_solver @ self.Y
 
         posterior_cov = sigma22 - (mean_solver @ sigma12)

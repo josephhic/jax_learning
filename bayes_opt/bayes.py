@@ -28,11 +28,17 @@ class BayesOpt:
         self.pngs = []
         self.file = './giffer/'
 
+        self.domain_shape = self.domain.shape
+
     def optimise(self, max_iter=20):
 
         for i, _ in enumerate(range(max_iter)):
 
             next_sample = self.next_sample()
+
+            print(next_sample)
+            print(next_sample.shape)
+
             y_new = self.sample_function_at(next_sample)
             self._add_data(next_sample, y_new)
             # self.plot(i)
@@ -47,6 +53,9 @@ class BayesOpt:
         ei = self._expected_improvement()
 
         sample_at = self.domain[jnp.argmax(ei)]
+
+        print(jnp.argmax(ei))
+
         return sample_at
 
     def sample_function_at(self, x):
@@ -86,6 +95,9 @@ class BayesOpt:
 
         mean, cov = self.GP.predict(self.domain)
         sigma = jnp.sqrt(jnp.diag(cov))
+
+        print(sigma)
+        print(sigma.shape)
 
         best_x_so_far = self.GP.Y[jnp.argmax(self.GP.X)]
 

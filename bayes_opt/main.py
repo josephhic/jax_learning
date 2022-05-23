@@ -18,6 +18,8 @@ from bayes import *
 
 import imageio
 
+# problem -> function returns 2d points not 1d value
+
 def func(x):
     return jnp.sin(5 * x) + (jnp.power(x, 2) / 10)
 
@@ -38,9 +40,15 @@ output = func(domain)
 xr, yr = np.meshgrid(xrand, yrand)
 
 dom = xr + yr
-out = func(dom)
 
-b = BayesOpt(func, squared_exponential, dom, out, domain)
+p = np.vstack([xrand, yrand]).T
+z = p[..., jnp.newaxis]
+
+u = (z - z.T)
+
+out = func(p).sum(axis=1)
+
+b = BayesOpt(func, squared_exponential, p, out, domain)
 
 
 plt.figure()
