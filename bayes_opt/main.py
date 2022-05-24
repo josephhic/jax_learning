@@ -53,7 +53,7 @@ u = (z - z.T)
 out = func([xrand, yrand])
 
 b = BayesOpt(func, squared_exponential, p, out, np.vstack([X, Y]).T)
-b.optimise()
+b.optimise(max_iter=4)
 
 
 plt.figure()

@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import imageio
 
 from tqdm import tqdm
+from kernels import _sqeuclidean
 
 
 from gp import GP
@@ -33,11 +34,14 @@ class BayesOpt:
 
         self.domain_shape = self.domain.shape
 
+        self.sample_locations = []
+
     def optimise(self, max_iter=20):
 
         for i, _ in enumerate(tqdm(range(max_iter))):
 
             next_sample = self.next_sample()
+
 
             y_new = self.sample_function_at(next_sample)
             self._add_data(next_sample, y_new)
@@ -51,8 +55,14 @@ class BayesOpt:
     def next_sample(self):
 
         ei = self._expected_improvement()
+        self.ei = ei
 
+
+        # not working. The domain needs to be the full domain not the vstack of the axes
+        # but then i don't see how to get the rest working
         sample_at = self.domain[jnp.argmax(ei)]
+
+        self.sample_locations.append(sample_at)
 
         return sample_at
 
