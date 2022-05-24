@@ -23,8 +23,8 @@ class GP:
 
     def add_data(self, x, y):
 
-        self.X = jnp.append(self.X, x)
-        self.Y = jnp.append(self.Y, y)
+        self.X = jnp.concatenate([self.X, x[jnp.newaxis, ...]], axis=0)
+        self.Y = jnp.concatenate([self.Y, y[jnp.newaxis, ...]], axis=0)
 
 
     def predict(self, x):
@@ -33,12 +33,7 @@ class GP:
         sigma22 = self.kernel_function(x, x)
         sigma12 = self.kernel_function(self.X, x)
 
-
-
         mean_solver = jax.scipy.linalg.solve(sigma11, sigma12).T
-
-        print(mean_solver)
-        print(mean_solver.shape)
 
         posterior_mean = mean_solver @ self.Y
 

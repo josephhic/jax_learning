@@ -27,6 +27,5 @@ import scipy
 
 
 def _sqeuclidean(xa, xb):
-
     return np.sqrt(((xa - xb.T) ** 2).sum(axis=1))
 

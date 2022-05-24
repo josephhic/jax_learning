@@ -21,7 +21,11 @@ import imageio
 # problem -> function returns 2d points not 1d value
 
 def func(x):
-    return jnp.sin(5 * x) + (jnp.power(x, 2) / 10)
+    return jnp.sin(5 * x) #'+ (jnp.power(x, 2) / 10)
+
+def func(X):
+    x, y = X
+    return jnp.sin(5 * (x + y))
 
 
 points = 10
@@ -35,7 +39,7 @@ yrand = np.random.uniform(-2, 2, points)
 
 # two d case
 domain = x + y
-output = func(domain)
+output = func([x, y])
 
 xr, yr = np.meshgrid(xrand, yrand)
 
@@ -46,9 +50,10 @@ z = p[..., jnp.newaxis]
 
 u = (z - z.T)
 
-out = func(p).sum(axis=1)
+out = func([xrand, yrand])
 
-b = BayesOpt(func, squared_exponential, p, out, domain)
+b = BayesOpt(func, squared_exponential, p, out, np.vstack([X, Y]).T)
+b.optimise()
 
 
 plt.figure()
@@ -62,15 +67,15 @@ measurement_noise = 0.2
 
 domain = (-8, 8)
 
-X1 = np.random.uniform(*domain, n1)
-_x = np.linspace(*domain, 100)
-y1 = func(X1)
-y1 += (measurement_noise**2 * np.random.rand(y1.size))
-X2 = np.linspace(*domain, n2)
+# X1 = np.random.uniform(*domain, n1)
+# _x = np.linspace(*domain, 100)
+# y1 = func(X1)
+# y1 += (measurement_noise**2 * np.random.rand(y1.size))
+# X2 = np.linspace(*domain, n2)
 
 from bayes import BayesOpt
 
-bo = BayesOpt(func, squared_exponential, X1, y1, X2)
+# bo = BayesOpt(func, squared_exponential, X1, y1, X2)
 
 # bo.optimise()
 

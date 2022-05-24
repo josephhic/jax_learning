@@ -9,6 +9,9 @@ from jax.scipy.stats import norm
 import matplotlib.pyplot as plt
 import imageio
 
+from tqdm import tqdm
+
+
 from gp import GP
 
 # acquisition function
@@ -32,12 +35,9 @@ class BayesOpt:
 
     def optimise(self, max_iter=20):
 
-        for i, _ in enumerate(range(max_iter)):
+        for i, _ in enumerate(tqdm(range(max_iter))):
 
             next_sample = self.next_sample()
-
-            print(next_sample)
-            print(next_sample.shape)
 
             y_new = self.sample_function_at(next_sample)
             self._add_data(next_sample, y_new)
@@ -53,8 +53,6 @@ class BayesOpt:
         ei = self._expected_improvement()
 
         sample_at = self.domain[jnp.argmax(ei)]
-
-        print(jnp.argmax(ei))
 
         return sample_at
 
@@ -95,9 +93,6 @@ class BayesOpt:
 
         mean, cov = self.GP.predict(self.domain)
         sigma = jnp.sqrt(jnp.diag(cov))
-
-        print(sigma)
-        print(sigma.shape)
 
         best_x_so_far = self.GP.Y[jnp.argmax(self.GP.X)]
 
